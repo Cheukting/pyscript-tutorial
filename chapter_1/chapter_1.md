@@ -72,7 +72,7 @@ Now save and refresh again to see the changes.
 
 Remember we can print out the time but it does not update automatically? If we want to do so we need to do a bit of async code. Don't worry if you are not familiar with async code, we will do it here together and you can look deeper into [async code in Python](https://docs.python.org/3/library/asyncio.html) later if you are interested.
 
-Now, let's go to the `hello_world.html` and use it as a starting point. If you had a copy of exercise 1, make a copy of it and we can start form there. If you are continuing form the last exercise, just delete the `<py-repl>` and `</py-repl>` tags and anything inside, we will start from there.
+Now, let's go to the `hello_world.html` and use it as a starting point. If you had a copy of exercise 1, make a copy of it and we can start form there. If you are continuing form the last exercise, just delete the `<py-repl>` and `</py-repl>` tags and anything between them, we will start from there.
 
 We need to modify the code inside the `<py-script>` and `</py-script>` tags. But first, we need to add a div element as `output` for the output, after the `<py-script>` and `</py-script>` tags, add this:
 
@@ -101,7 +101,13 @@ Now, let's create an async function (or it is called coroutine) to make it loopi
 async def tick():
 ```
 
-In this function, it will never end, so we use a while `True` loop, then we do the write into `output` and then sleep for a second:
+In this function, it want it to run and never end, so we:
+
+1) use a while `True` loop;
+2) then we do the `.write` into `output` (the line above) and finally;
+3) sleep for a second before the next iteration
+
+just like this:
 
 ```python
 async def tick():
@@ -139,4 +145,27 @@ pyscript.run_until_complete(tick())
 
 When you are done, save and refresh (or open the file) and see the async magic happened.
 
-## Exercise 4 - Adding libraries
+## Exercise 4 - Adding packages
+
+Up until now we can use Python with browser, but we have not include any extra Python packages where the true power of Python lies. Here we will see how we can use Pandas in the browser.
+
+Let's start with the [template.html](template.html) again, make a copy of it. You can call it `using_pandas.html`.
+
+First, if we would like to use any packages that does not come with Python by default (here by default Pyodide include most standard libraries of CPython). We would like to add that in. To do that, we will use the `<py-config>` tag, you can see the details in [the documentation here](https://github.com/pyscript/pyscript/blob/main/docs/tutorials/getting-started.md#the-py-config-tag).
+
+Let's add this before the `<py-script>` tag:
+
+```
+<py-config>
+  packages = ["pandas"]
+</py-config>
+```
+
+Now we have make Pandas avaliable to our code within the `<py-script>` and `</py-script>` tags, but don't forget to import it. Then we can create a DataFrame. Put the following between the `<py-script>` and `</py-script>` tags:
+
+```Python
+import pandas as pd
+d = {'col1': [1, 2], 'col2': [3, 4]}
+df = pd.DataFrame(data=d)
+df
+```

@@ -23,7 +23,7 @@ The line that makes the PyScript magic happened is
 
 And is needed if you want to use PyScript. In this chapter we are using the CDN version of it as above as it will always be the latest version. If you want to keep a certain version for your application, you can self host it.
 
-> Self hosting details to be added
+> You can choose to self host the complied PyScirpt files instead of using the CDN. The files can be found in the [PyScript repo tags](https://github.com/pyscript/pyscript/tags). Replace the above urls to the url of your `pyscript.js` and `pyscript.css` files.
 
 Now it's time to write some code. Python code can be written within the tags `<py-script>` and `</py-script>`.
 

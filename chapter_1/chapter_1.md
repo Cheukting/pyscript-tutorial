@@ -2,6 +2,8 @@
 
 In this chapter, we will explore the basics of PyScript with some exercises. We will use the [template.html](template.html) as a base.
 
+---
+
 ## Exercise 1 - Hello World
 
 First, make a copy of the [template.html](template.html), you can name it something else like `hello_world.html`.
@@ -19,7 +21,9 @@ The line that makes the PyScript magic happened is
 <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 ```
 
-And is needed if you want to use PyScript. In this chapter we are using the CDN version of it as above as it will always be the latest version. If you want to keep a certain version for your application, you can self host it. (Details to follow)
+And is needed if you want to use PyScript. In this chapter we are using the CDN version of it as above as it will always be the latest version. If you want to keep a certain version for your application, you can self host it.
+
+> Self hosting details to be added
 
 Now it's time to write some code. Python code can be written within the tags `<py-script>` and `</py-script>`.
 
@@ -34,6 +38,8 @@ print(datetime.now())
 When you are done, try opening the `hello_world.html` file on your browser of choice.
 
 As you refresh, you see the time got updated. What if we want to have the time to be updated constantly? We will discover that in later exercises.
+
+---
 
 ## Exercise 2 - Python REPL
 
@@ -67,6 +73,8 @@ What if I want to keep the result of the previous REPL and have a new one after 
 ```
 
 Now save and refresh again to see the changes.
+
+---
 
 ## Exercise 3 - Async
 
@@ -145,13 +153,19 @@ pyscript.run_until_complete(tick())
 
 When you are done, save and refresh (or open the file) and see the async magic happened.
 
+---
+
 ## Exercise 4 - Adding packages
 
 Up until now we can use Python with browser, but we have not include any extra Python packages where the true power of Python lies. Here we will see how we can use Pandas in the browser.
 
 Let's start with the [template.html](template.html) again, make a copy of it. You can call it `using_pandas.html`.
 
-First, if we would like to use any packages that does not come with Python by default (here by default Pyodide include most standard libraries of CPython). We would like to add that in. To do that, we will use the `<py-config>` tag, you can see the details in [the documentation here](https://github.com/pyscript/pyscript/blob/main/docs/tutorials/getting-started.md#the-py-config-tag).
+First, if we would like to use any packages that does not come with Python by default. We would like to add that in. To do that, we will use the `<py-config>` tag, you can see the details in [the documentation here](https://github.com/pyscript/pyscript/blob/main/docs/tutorials/getting-started.md#the-py-config-tag).
+
+> `<py-config>` tag is not only used for including packages. Please check [the documentation](https://github.com/pyscript/pyscript/blob/main/docs/tutorials/getting-started.md#the-py-config-tag) for the details of what setting can be made.
+
+> Here by default Pyodide runtime include most standard libraries of CPython. It maybe different if we use other runtimes.
 
 Let's add this before the `<py-script>` tag:
 
@@ -169,3 +183,65 @@ d = {'col1': [1, 2], 'col2': [3, 4]}
 df = pd.DataFrame(data=d)
 df
 ```
+
+Now opening the html file in a browser, you will see the DataFrame being loaded as a table (from now on the exercise may takes a while to load, please be patient).
+
+> A small note here, if we use `print(df)` the table format will disappear and the table will become plain text, this behaviour may change in the future versions of PyScript.
+
+---
+
+## Exercise 5 - Loading a file
+
+Most of the time, when using Pandas, we will load in a csv for data analysis. To load a hosted csv from a url, we can do so with the `open_url` method provided by Pyodide. Let's put this line above the `import pandas as pd` line:
+
+```python
+from pyodide.http import open_url
+```
+
+We will load the [ice cream data](https://github.com/Cheukting/pyscript-ice-cream/blob/main/bj-products.csv) which is hosted on GitHub as `df`.
+
+> The ice cream data is originally from Kaggle [Ice Cream Dataset](https://www.kaggle.com/datasets/tysonpo/ice-cream-dataset)
+
+> Files need to be hosted on a server. To do it locally, a local server need to be started. The easiest way is to use the `http` module in Python: `python -m http.server`
+
+Replace the two lines below `import pandas as pd` with this:
+
+```python
+df = pd.read_csv(open_url("https://raw.githubusercontent.com/Cheukting/pyscript-ice-cream/main/bj-products.csv"))
+```
+
+To sum up, the code between the `<py-script>` and `</py-script>` tags should look like this:
+
+```python
+from pyodide.http import open_url
+import pandas as pd
+df = pd.read_csv(open_url("https://raw.githubusercontent.com/Cheukting/pyscript-ice-cream/main/bj-products.csv"))
+df
+```
+
+Now opening the html file in a browser again or refresh the page if you already have it opened. Now we will see the dataset being loaded in full. From here we can do all the operations which Pandas offer, for example, to show only the head (first 5 rows) of the data, replace the last `df` with `df.head()` and refresh.
+
+---
+
+## Exercise 6 - Data analysis with Pandas
+
+In the last exercise, we can do Pandas analysis with the ice cream data. What if we want the user to be able to do it without changing the html file? We can do it with the `<py-repl>`.
+
+Let's delete the last line with `df` or `df.head()` and put the following under the `</py-script>`:
+
+```
+<py-repl>
+# ice cream data pre-loaded as df
+df.head()
+</py-repl>
+```
+
+Now refresh the page (or open it) and see that instead of the DataFrame, there is a REPL for you to do the Pandas operation with `df`. You can now try running `df.head()` by pushing `shift + enter`. After that, try changing the `df.head()` to other operations like:
+
+* `df.tail()` to show the tail of the data set,
+* `df[['name']]` to get all the names of the ice creams, or
+* `df.query("rating > 4 and rating_count > 100")` for the best rated ice creams
+
+---
+
+This concludes Chapter 1 of this workshop. To continue learning how to create data visualisation and interactive elements, please go to Chapter 2 (To be added)

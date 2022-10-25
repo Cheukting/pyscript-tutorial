@@ -175,6 +175,8 @@ Let's add this before the `<py-script>` tag:
 </py-config>
 ```
 
+> The packages load in like this need to be those that is [available with Pyodide](https://pyodide.org/en/stable/usage/packages-in-pyodide.html). For packages that are not available and is purely written in Python, you can self host the wheels downloaded on [PyPI](). If it is not purely written in Python, you will have to [make a request to the Pyodide team](https://github.com/pyodide/pyodide/issues/new?assignees=&labels=new+package+request&template=package_request.md&title=).
+
 Now we have make Pandas avaliable to our code within the `<py-script>` and `</py-script>` tags, but don't forget to import it. Then we can create a DataFrame. Put the following between the `<py-script>` and `</py-script>` tags:
 
 ```Python

@@ -11,19 +11,20 @@ First, make a copy of the [template.html](template.html), you can name it someth
 Then we inspect the file. See the line
 
 ```html
-<link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+<link rel="stylesheet" href="https://pyscript.net/releases/2022.09.1/pyscript.css" />
 ```
 It is calling the stylesheet that PyScript may need to display some of the default elements like the Python REPL (which we will talk about in other exercises). It only affect the style of the REPL so if we are not using it you can opt-out of it or use your own style sheet.
 
 The line that makes the PyScript magic happened is
 
 ```html
-<script defer src="https://pyscript.net/latest/pyscript.js"></script>
+<script defer src="https://pyscript.net/releases/2022.09.1/pyscript.js"></script>
 ```
 
-And is needed if you want to use PyScript. In this chapter we are using the CDN version of it as above as it will always be the latest version. If you want to keep a certain version for your application, you can self host it.
+And is needed if you want to use PyScript. In this chapter we are using version 2022.09.1, which is hosted on `pyscript.net` CDN. Pyscript is still under heavy development and it might happen that newer releases introduce some backward-incompatible change. By using a specific version, we ensure that our applications will run "forever".
 
-> You can choose to self host the complied PyScirpt files instead of using the CDN. The files can be found in the [PyScript repo tags](https://github.com/pyscript/pyscript/tags). Replace the above urls to the url of your `pyscript.js` and `pyscript.css` files.
+
+> You can choose to self host the complied PyScript files instead of using the CDN. The files can be found in the [PyScript repo tags](https://github.com/pyscript/pyscript/tags). Replace the above urls to the url of your `pyscript.js` and `pyscript.css` files.
 
 Now it's time to write some code. Python code can be written within the tags `<py-script>` and `</py-script>`.
 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PyScript Tutorial</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2022.09.1/pyscript.css" />
+    <script defer src="https://pyscript.net/releases/2022.09.1/pyscript.js"></script>
+</head>
+<body>
+  <py-config>
+    packages = ["pandas"]
+  </py-config>
+  <py-script>
+    from pyodide.http import open_url
+    import pandas as pd
+    df = pd.read_csv(open_url("https://raw.githubusercontent.com/Cheukting/pyscript-ice-cream/main/bj-products.csv"))
+    df
+  </py-script>
+</body>
+</html>

@@ -247,4 +247,4 @@ Now refresh the page (or open it) and see that instead of the DataFrame, there i
 
 ---
 
-This concludes Chapter 1 of this workshop. To continue learning how to create data visualisation and interactive elements, please go to Chapter 2 (To be added)
+This concludes Chapter 1 of this workshop. To continue learning how to create data visualisation and interactive elements, please go to [Chapter 2](/chapter_2/chapter_2.md)

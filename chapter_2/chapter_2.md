@@ -1,6 +1,6 @@
 # Chapter 2 - Visualisation with PyScript
 
-In this chapter, we will start using PyScript for some data visualisation. Like in the last chapter, we will start with a [template.html](template.html) which is a continuation from exercise 5 of [Chapter 1](/chapter_1/chapter_1.md#exercise-5---loading-a-file).
+In this chapter, we will start using PyScript for some data visualisation. Like in the last chapter, we will start with a [template.html](template.html) which is a continuation from [exercise 5 of Chapter 1](/chapter_1/chapter_1.md#exercise-5---loading-a-file).
 
 Moving forward we will assume you have already got the basic knowledge from [Chapter 1](/chapter_1/chapter_1.md) and know how to use some popular Python data handling and visualisation library like [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
 

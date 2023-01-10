@@ -26,7 +26,7 @@ And is needed if you want to use PyScript. In this chapter we are using version 
 
 > You can choose to self host the complied PyScript files instead of using the CDN. The files can be found in the [PyScript repo tags](https://github.com/pyscript/pyscript/tags). Replace the above urls to the url of your `pyscript.js` and `pyscript.css` files.
 
-Now it's time to write some code. Python code can be written within the tags `<py-script>` and `</py-script>`.
+Now it's time to write some code. Python code can be written within the tags pair `<py-script>` and `</py-script>`.
 
 Let's try to print the current time. Do you know how to do it? Try it before you see how it is done below.
 
@@ -83,7 +83,7 @@ Remember we can print out the time but it does not update automatically? If we w
 
 Now, let's go to the `hello_world.html` and use it as a starting point. If you had a copy of exercise 1, make a copy of it and we can start form there. If you are continuing form the last exercise, just delete the `<py-repl>` and `</py-repl>` tags and anything between them, we will start from there.
 
-We need to modify the code inside the `<py-script>` and `</py-script>` tags. But first, we need to add a div element as `output` for the output, after the `<py-script>` and `</py-script>` tags, add this:
+We need to modify the code inside the `<py-script>` and `</py-script>` tags pair. But first, we need to add a div element as `output` for the output, after the `<py-script>` and `</py-script>` tags pair, add this:
 
 ```html
 <div id=output></div>
@@ -137,7 +137,7 @@ Then now we can put `tick` into the event loop:
 pyscript.run_until_complete(tick())
 ```
 
-Did you follow? If you are not sure here is all the code within the `<py-script>` and `</py-script>` tags:
+Did you follow? If you are not sure here is all the code within the `<py-script>` and `</py-script>` tags pair:
 
 
 ```python
@@ -178,7 +178,7 @@ Let's add this before the `<py-script>` tag:
 
 > The packages load in like this need to be those that is [available with Pyodide](https://pyodide.org/en/stable/usage/packages-in-pyodide.html). For packages that are not available and is purely written in Python, you can self host the wheels downloaded on [PyPI](). If it is not purely written in Python, you will have to [make a request to the Pyodide team](https://github.com/pyodide/pyodide/issues/new?assignees=&labels=new+package+request&template=package_request.md&title=).
 
-Now we have make Pandas avaliable to our code within the `<py-script>` and `</py-script>` tags, but don't forget to import it. Then we can create a DataFrame. Put the following between the `<py-script>` and `</py-script>` tags:
+Now we have make Pandas available to our code within the `<py-script>` and `</py-script>` tags pair, but don't forget to import it. Then we can create a DataFrame. Put the following between the `<py-script>` and `</py-script>` tags pair:
 
 ```Python
 import pandas as pd
@@ -213,7 +213,7 @@ Replace the two lines below `import pandas as pd` with this:
 df = pd.read_csv(open_url("https://raw.githubusercontent.com/Cheukting/pyscript-ice-cream/main/bj-products.csv"))
 ```
 
-To sum up, the code between the `<py-script>` and `</py-script>` tags should look like this:
+To sum up, the code between the `<py-script>` and `</py-script>` tags pair should look like this:
 
 ```python
 from pyodide.http import open_url

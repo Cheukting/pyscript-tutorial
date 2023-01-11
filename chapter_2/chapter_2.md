@@ -4,7 +4,7 @@ In this chapter, we will start using PyScript for some data visualisation. Like 
 
 Moving forward we will assume you have already got the basic knowledge from [Chapter 1](/chapter_1/chapter_1.md) and know how to use some popular Python data handling and visualisation library like [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
 
-There will also be some knowledge about html elements required. You can find the reference of them at the [W3 school website](https://www.w3schools.com/html/).
+There will also be some basic knowledge about HTML and JavaScript required. We will try to explain and link the reference when we go over them. You can also find the reference at the [W3 school website](https://www.w3schools.com/).
 
 ---
 
@@ -124,3 +124,124 @@ One last step before we move on, we can style the input area and add extra text 
 ```
 
 Try refreshing again. And if we are happy with how it looks like, we can now move on to the next exercise which we will make a new plot according which option is highlighted.
+
+## Exercise 3 - Interactive new plot
+
+Now things are start getting interesting. We will filter our data depending on the flavour selected. Notice the `value`s in the buttons above appears in the ingredient list in the ice cream flavours? We are going to filter out the ice cream flavours that has the selected ingredient in their list and only showing those in the plot.
+
+First, we have to put the code that involving making a plot into a function so we can "redraw" the plot when our data changes. Remember in the first exercise, we have created the plot with this:
+
+```
+fig, ax = plt.subplots()
+bars = ax.barh(df["name"], df["rating"], height=0.7)
+ax.bar_label(bars)
+plt.title("Rating of ice cream flavours of your choice")
+fig
+```
+
+Now let's change it into a function:
+
+```
+def plot(data):
+    fig, ax = plt.subplots()
+    bars = ax.barh(data["name"], data["rating"], height=0.7)
+    ax.bar_label(bars)
+    plt.title("Rating of ice cream flavours of your choice")
+    pyscript.write("output",fig)
+```
+
+Notice that in the last line, we are using `pyscript.write("output",fig)` instead of just `fig` as we have now a dedicated output `<div>` element for the plot. We also change the name `df` to `data` within the function to avoid confusion with the original `df`.
+
+If we call the `plot` function with the original `df` it should give us the same thing as before now:
+
+```
+def plot(data):
+    fig, ax = plt.subplots()
+    bars = ax.barh(data["name"], data["rating"], height=0.7)
+    ax.bar_label(bars)
+    plt.title("Rating of ice cream flavours of your choice")
+    pyscript.write("output",fig)
+
+plot(df)
+```
+
+Let's try save the code and refresh the page. If the horizontal bar plot still shows as before, we are doing it right.
+
+Next, we have to check which flavour has been selected. To do that, first we will gather all the button elements. We do it before `plot(df)`:
+
+```
+flavour_elements = document.getElementsByName("flavour")
+
+plot(df)
+```
+
+Here, using [document.getElementsByName](https://www.w3schools.com/js/js_htmldom_elements.asp), `flavour_elements` will be a list of elements that has `flavour` as `name`, which is all our buttons.
+
+Next, we will write some code to check each of the elements in `flavour_elements` to see if they are selected and if so we will filter the data accordingly. However, since we want to repeat this process every time the user click on the buttons, we need to write these code in a function, we can put it after the `flavour_elements` definition:
+
+```
+flavour_elements = document.getElementsByName("flavour")
+
+def select_flavour():
+    for ele in flavour_elements:
+        if ele.checked:
+            current_selected = ele.value
+            break
+    if current_selected == "ALL":
+        plot(df)
+    else:
+        filter = df.apply(lambda x: ele.value in x["ingredients"], axis=1)
+        plot(df[filter])
+```
+
+There is a lot to cover here. In the first for loop we go through all the elements in the `flavour_elements` and if any is checked, we store it in the `current_selected` it works because only one button can be selected at a time. Then, if the `current_selected` is `ALL` we will plot the original unfiltered `df` otherwise we will filter those that has the ingredient in the ingredient list and plot the filtered data.
+
+One last thing about this function, we have to make it an [event handler](https://www.w3schools.com/js/js_htmldom_eventlistener.asp) as it is doing things when an event, user clicking on the button, happened.
+
+To make a event handler in Python that can work with DOM, we have to use the `create_proxy` provided by `pyodide`. But first, we need our `select_flavour` function to take one parameter `event`, like this:
+
+```
+def select_flavour(event):
+```
+
+The rest of the function is unchanged. Then we have to import `create_proxy`, let's put it at the top of the Python code, together with the other imports:
+
+```
+from pyodide import create_proxy
+from pyodide.http import open_url
+import pandas as pd
+```
+
+Then we can create the event handlers using this line after the definition of `select_flavour`:
+
+```
+def select_flavour(event):
+    for ele in flavour_elements:
+        if ele.checked:
+            current_selected = ele.value
+            break
+    if current_selected == "ALL":
+        plot(df)
+    else:
+        filter = df.apply(lambda x: ele.value in x["ingredients"], axis=1)
+        plot(df[filter])
+
+ele_proxy = create_proxy(select_flavour)
+```
+
+Now we have `ele_proxy` which is our event handler when someone click on the buttons. Nest, we have to add [event listeners](https://www.w3schools.com/js/js_htmldom_eventlistener.asp) to all the button elements so it will trigger the event handler when being clicked on. Remember that we have all the button elements stored as `flavour_elements`, so we add a for loop like this:
+
+```
+ele_proxy = create_proxy(select_flavour)
+
+for ele in flavour_elements:
+    ele.addEventListener("change", ele_proxy)
+
+plot(df)
+```
+
+Now, let's refresh the page in the browser and see the result. After loading, you should be able to see the plot changes after clicking the button. Bring up the JavaScript Console for debugging if needed.
+
+The final result from exercise 1 to 3 is saved as [viz_with_matplotlib.html](viz_with_matplotlib.html) for your reference.
+
+Congratulation, you have made your first interactive visualisation with PyScript. However, it is not the prettiest visualisation. Personally I like using D3 as it provide a very nice transition when we change the plot. From this point on, we will be using D3 for visualisation.

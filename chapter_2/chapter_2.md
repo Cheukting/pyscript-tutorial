@@ -198,7 +198,7 @@ There is a lot to cover here. In the first for loop we go through all the elemen
 
 One last thing about this function, we have to make it an [event handler](https://www.w3schools.com/js/js_htmldom_eventlistener.asp) as it is doing things when an event, user clicking on the button, happened.
 
-To make a event handler in Python that can work with DOM, we have to use the `create_proxy` provided by `pyodide`. But first, we need our `select_flavour` function to take one parameter `event`, like this:
+To make a event handler in Python that can work with DOM, we have to use the `create_proxy` provided by `pyodide.ffi`. But first, we need our `select_flavour` function to take one parameter `event`, like this:
 
 ```
 def select_flavour(event):
@@ -207,7 +207,7 @@ def select_flavour(event):
 The rest of the function is unchanged. Then we have to import `create_proxy`, let's put it at the top of the Python code, together with the other imports:
 
 ```
-from pyodide import create_proxy
+from pyodide.ffi import create_proxy
 from pyodide.http import open_url
 import pandas as pd
 ```
@@ -245,3 +245,175 @@ Now, let's refresh the page in the browser and see the result. After loading, yo
 The final result from exercise 1 to 3 is saved as [viz_with_matplotlib.html](viz_with_matplotlib.html) for your reference.
 
 Congratulation, you have made your first interactive visualisation with PyScript. However, it is not the prettiest visualisation. Personally I like using D3 as it provide a very nice transition when we change the plot. From this point on, we will be using D3 for visualisation.
+
+## Exercise 4 - Interactive plot with D3
+
+[D3](https://d3js.org/) is a popular JavaScript library for generating quality interactive graphs. Now with PyScript we can use D3 together with the Python libraries that we are familiar with and love. We will not be explaining how to use D3 in details in this tutorial. If you want to learn more, please visit the [D3 website](https://d3js.org/) for the example and references.
+
+We will start by modifying the work we have done so far. We will be replacing Matplotlib with D3 for plotting our horizontal bar plots. So first of all, we will remove Matplotlib dependency in our code:
+
+```
+<py-config>
+  packages = ["pandas"]
+</py-config>
+```
+
+Instead, we will be importing D3. However, since D3 is a JavaScript library, we will do it the JavaScript way. Add these after the `</py-config>` tag:
+
+```
+<script type="importmap">
+{
+  "imports": {
+    "d3": "https://cdn.skypack.dev/pin/d3@v7.6.1-1Q0NZ0WZnbYeSjDusJT3/mode=imports,min/optimized/d3.js"
+  }
+}
+</script>
+<script type="module">
+import * as d3 from "https://cdn.skypack.dev/pin/d3@v7.6.1-1Q0NZ0WZnbYeSjDusJT3/mode=imports,min/optimized/d3.js";
+</script>
+```
+
+After that, we work on the Python code within the `<py-script>` and `</py-script>` tags pair. Replace import `pyplot`:
+
+```
+import matplotlib.pyplot as plt
+```
+
+with `d3`:
+
+```
+import d3
+```
+
+Now the D3 library is available to use with the Python code, with a few necessary conversion of objects between JavaScript and Python using `to_js` in `pyodide.ffi`. To make `to_js` available, we have to import it right after `create_proxy`:
+
+```
+from pyodide.ffi import create_proxy, to_js
+```
+
+As you may guess, the parameter setting with `plt` and the `plot` function that we define need to be change as well. We will do that step by step.
+
+First, we have some initial settings for the plot. In Matplotlib, we just simply set the figure size. However, we want a better looking visualisation this time so it is more complicated in this D3 example. We replace this line:
+
+```
+plt.rcParams["figure.figsize"] = (20,30)
+```
+
+with the following:
+
+```
+viz = d3.select("#output")
+viz.select(".loading").remove()
+
+margin = {"top": 30, "right": 30, "bottom": 70, "left": 260}
+width = 1000 - margin["left"] - margin["right"]
+max_height = 1200 - margin["top"] - margin["bottom"]
+
+svg = (viz
+  .append("svg")
+    .attr("width", width + margin["left"] + margin["right"])
+    .attr("height", max_height + margin["top"] + margin["bottom"])
+  .append("g")
+    .attr("transform",
+          f"translate({margin['left']},{margin['top']})")
+  )
+
+x = d3.scaleLinear().domain([0, 5]).range([0, width])
+xAxis = svg.append("g").call(d3.axisBottom(x))
+
+y = d3.scaleBand()
+yAxis = svg.append("g").call(d3.axisLeft(y))
+```
+
+The first 2 lines, we set the visualisation to be display at the `output` element in our HTML and remove the loading animation in D3. Then, we are setting the margin and the size of the figure. We also initialise 5 elements: `svg`, `x`, `xAxis`, `y` and `yAxis`, some of which we will manipulate when plotting.
+
+Next, we will replace the code in the `plot` function. Instead of:
+
+```
+def plot(data):
+    fig, ax = plt.subplots()
+    bars = ax.barh(data["name"], data["rating"], height=0.7)
+    ax.bar_label(bars)
+    plt.title("Rating of ice cream flavours of your choice")
+    pyscript.write("output",fig)
+```
+
+Now we have:
+
+```
+def plot(data):
+    data_js = to_js(data.to_dict(orient="records"))
+    height = data["name"].count() * 100 - margin["top"] - margin["bottom"]
+    if height > max_height:
+        height = max_height
+
+    (
+    svg.transition().duration(1000)
+      .attr("width", width + margin["left"] + margin["right"])
+      .attr("height", height + margin["top"] + margin["bottom"])
+    )
+
+    # x-axis
+    xAxis.transition().duration(1000).attr("transform", f"translate(0,{height})").call(d3.axisBottom(x))
+
+    # y-axis
+    y.domain(list(data["name"])).range([0, height]).padding(.1)
+    yAxis.transition().duration(1000).call(d3.axisLeft(y))
+
+    # bars
+    y_fn = create_proxy(lambda record, *_:y(record["name"]))
+    x_fn = create_proxy(lambda record, *_:x(record["rating"]))
+    u = svg.selectAll("rect").data(data_js)
+
+    (
+      u.enter()
+      .append("rect")
+      .merge(u)
+      .transition()
+      .duration(1000)
+      .attr("x", x(0) )
+      .attr("y", y_fn)
+      .attr("width", x_fn)
+      .attr("height", y.bandwidth() )
+      .attr("fill", "#69b3a2")
+    )
+    u.exit().remove()
+
+    # label
+    label_fn = create_proxy(lambda record, *_:record["rating"])
+    labels = svg.selectAll(".label").remove()
+    l = svg.selectAll(".text").data(data_js)
+
+    (
+  	  l.enter()
+  	  .append("text")
+      .merge(l)
+      .transition()
+      .duration(1000)
+  	  .attr("class","label")
+  	  .attr("x", x_fn)
+  	  .attr("y", y_fn)
+  	  .attr("dy", "1.5em")
+  	  .text(label_fn)
+    )
+    l.exit().remove()
+
+    (
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin["top"] / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("⭐ Ice cream flavour ratings ⭐")
+    )
+```
+
+Which looks like a lot since we are controlling every single elements in the plot and their transition as well. We won't goes into details here, feel free to look up the examples and reference in the [D3 documentation](https://d3js.org/) for the explanation. However, there's one thing to pay attention here. The first line
+
+```
+data_js = to_js(data.to_dict(orient="records"))
+```
+
+is essential for what we are doing here. Since `data` is a Pandas `DataFrame`, therefore it is a Python object, we need to convert it to a JavaScript object so that the D3 library understand. We first convert into a dictionary in Python using `to_dict` method in Pandas `DataFrame`, then we use `to_js` to convert the dictionary into a JavaScript object.
+
+Now, we may refresh the browser and see the interactive D3 graph. The transition animation of the plot is so addictive to watch. The completed result is at [viz_with_d3.html](viz_with_d3.html) for your reference.

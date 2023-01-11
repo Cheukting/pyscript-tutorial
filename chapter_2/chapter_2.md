@@ -6,6 +6,8 @@ Moving forward we will assume you have already got the basic knowledge from [Cha
 
 There will also be some basic knowledge about HTML and JavaScript required. We will try to explain and link the reference when we go over them. You can also find the reference at the [W3 school website](https://www.w3schools.com/).
 
+In the later parts of this chapter, we will use the [D3 library]((https://d3js.org/). So it is required that you either have some basic knowledge of it or feel comfortable digging through their documentation to understand how the library works yourself.
+
 ---
 
 ## Exercise 1 - Generate a static plot

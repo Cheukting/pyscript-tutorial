@@ -2,6 +2,8 @@
 
 In this chapter, we will explore the basics of PyScript with some exercises. We will use the [template.html](template.html) as a base.
 
+Before we start, a tip for developing code in PyScript. We will open the html page in the browser often to check the result. If something does not work as expected, we can bring up the JavaScript Console to see the error messages. If you are using Chrome (which is recommended in this tutorial), you can open it via the menu `View > Developer > JavaScript Console`
+
 ---
 
 ## Exercise 1 - Hello World

@@ -26,7 +26,7 @@
     packages = ["pandas", "matplotlib"]
   </py-config>
   <py-script>
-    from pyodide import create_proxy
+    from pyodide.ffi import create_proxy
     from pyodide.http import open_url
     import pandas as pd
 

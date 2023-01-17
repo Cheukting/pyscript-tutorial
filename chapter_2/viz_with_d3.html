@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <title>PyScript Tutorial</title>
-    <link rel="stylesheet" href="https://pyscript.net/releases/2022.09.1/pyscript.css" />
-    <script defer src="https://pyscript.net/releases/2022.09.1/pyscript.js"></script>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2022.12.1/pyscript.css" />
+    <script defer src="https://pyscript.net/releases/2022.12.1/pyscript.js"></script>
 </head>
 <body>
   <div id="input" style="margin: 20px;">
@@ -25,22 +25,13 @@
   <py-config>
     packages = ["pandas"]
   </py-config>
-  <script type="importmap">
-  {
-    "imports": {
-      "d3": "https://cdn.skypack.dev/pin/d3@v7.6.1-1Q0NZ0WZnbYeSjDusJT3/mode=imports,min/optimized/d3.js"
-    }
-  }
-  </script>
-  <script type="module">
-  import * as d3 from "https://cdn.skypack.dev/pin/d3@v7.6.1-1Q0NZ0WZnbYeSjDusJT3/mode=imports,min/optimized/d3.js";
-  </script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <py-script>
     from pyodide.ffi import create_proxy, to_js
     from pyodide.http import open_url
     import pandas as pd
 
-    import d3
+    from js import d3
 
     viz = d3.select("#output")
     viz.select(".loading").remove()
@@ -132,7 +123,7 @@
             .text("⭐ Ice cream flavour ratings ⭐")
         )
 
-    flavour_elements = document.getElementsByName("flavour")
+    flavour_elements = js.document.getElementsByName("flavour")
 
     def select_flavour(event):
         for ele in flavour_elements:

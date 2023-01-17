@@ -172,17 +172,17 @@ Let's try save the code and refresh the page. If the horizontal bar plot still s
 Next, we have to check which flavour has been selected. To do that, first we will gather all the button elements. We do it before `plot(df)`:
 
 ```
-flavour_elements = document.getElementsByName("flavour")
+flavour_elements = js.document.getElementsByName("flavour")
 
 plot(df)
 ```
 
-Here, using [document.getElementsByName](https://www.w3schools.com/js/js_htmldom_elements.asp), `flavour_elements` will be a list of elements that has `flavour` as `name`, which is all our buttons.
+Here, using [document.getElementsByName](https://www.w3schools.com/js/js_htmldom_elements.asp) from JavaScript (that's why we have the `js.` suffix), `flavour_elements` will be a list of elements that has `flavour` as `name`, which is all our buttons.
 
 Next, we will write some code to check each of the elements in `flavour_elements` to see if they are selected and if so we will filter the data accordingly. However, since we want to repeat this process every time the user click on the buttons, we need to write these code in a function, we can put it after the `flavour_elements` definition:
 
 ```
-flavour_elements = document.getElementsByName("flavour")
+flavour_elements = js.document.getElementsByName("flavour")
 
 def select_flavour():
     for ele in flavour_elements:
@@ -260,19 +260,10 @@ We will start by modifying the work we have done so far. We will be replacing Ma
 </py-config>
 ```
 
-Instead, we will be importing D3. However, since D3 is a JavaScript library, we will do it the JavaScript way. Add these after the `</py-config>` tag:
+Instead, we will be importing D3. However, since D3 is a JavaScript library, we will do it the JavaScript way. Add this line after the `</py-config>` tag:
 
 ```
-<script type="importmap">
-{
-  "imports": {
-    "d3": "https://cdn.skypack.dev/pin/d3@v7.6.1-1Q0NZ0WZnbYeSjDusJT3/mode=imports,min/optimized/d3.js"
-  }
-}
-</script>
-<script type="module">
-import * as d3 from "https://cdn.skypack.dev/pin/d3@v7.6.1-1Q0NZ0WZnbYeSjDusJT3/mode=imports,min/optimized/d3.js";
-</script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 ```
 
 After that, we work on the Python code within the `<py-script>` and `</py-script>` tags pair. Replace import `pyplot`:
@@ -281,10 +272,10 @@ After that, we work on the Python code within the `<py-script>` and `</py-script
 import matplotlib.pyplot as plt
 ```
 
-with `d3`:
+with import `d3` from `js`:
 
 ```
-import d3
+from js import d3
 ```
 
 Now the D3 library is available to use with the Python code, with a few necessary conversion of objects between JavaScript and Python using `to_js` in `pyodide.ffi`. To make `to_js` available, we have to import it right after `create_proxy`:

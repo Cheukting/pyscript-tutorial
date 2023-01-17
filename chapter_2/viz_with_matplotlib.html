@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <title>PyScript Tutorial</title>
-    <link rel="stylesheet" href="https://pyscript.net/releases/2022.09.1/pyscript.css" />
-    <script defer src="https://pyscript.net/releases/2022.09.1/pyscript.js"></script>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2022.12.1/pyscript.css" />
+    <script defer src="https://pyscript.net/releases/2022.12.1/pyscript.js"></script>
 </head>
 <body>
   <div id="input" style="margin: 20px;">
@@ -42,7 +42,7 @@
         plt.title("Rating of ice cream flavours of your choice")
         pyscript.write("output",fig)
 
-    flavour_elements = document.getElementsByName("flavour")
+    flavour_elements = js.document.getElementsByName("flavour")
 
     def select_flavour(event):
         for ele in flavour_elements:

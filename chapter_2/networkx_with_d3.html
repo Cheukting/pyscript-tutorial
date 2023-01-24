@@ -1,0 +1,96 @@
+
+<html>
+  <head>
+    <title>Zachary’s Karate Club graph</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2022.12.1/pyscript.css" />
+    <script defer src="https://pyscript.net/releases/2022.12.1/pyscript.js"></script>
+    <py-config type="json">
+      {
+        "packages": ["networkx"]
+      }
+    </py-config>
+    </head>
+    <body>
+      <div id="stat" style="margin: 20px;"></div>
+      <div id="viz"></div>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<py-script>
+  import networkx as nx
+  from js import d3
+  from pyodide.ffi import create_proxy, to_js
+
+  G = nx.karate_club_graph()
+  node_list = [{"id": node[0], "name": node[1]} for node in G.nodes(data="club")]
+  edge_list = [{"source": edge[0], "target": edge[1]} for edge in nx.to_edgelist(G)]
+
+  avg_conn = nx.average_node_connectivity(G)
+  graph_radius = nx.radius(G)
+  center_nodes = nx.center(G)
+
+  stat = Element("stat")
+  stat.element.innerText = f"""Avg. node connectivity is {avg_conn}
+  Radius of the graph is {graph_radius}
+  Center nodes are: {center_nodes}"""
+
+  margin = {"top": 30, "right": 30, "bottom": 70, "left": 40}
+  width = 1000 - margin["left"] - margin["right"]
+  max_height = 800 - margin["top"] - margin["bottom"]
+
+  viz = d3.select("#viz")
+  viz.select(".loading").remove()
+
+  svg = (viz
+    .append("svg")
+      .attr("width", width + margin["left"] + margin["right"])
+      .attr("height", max_height + margin["top"] + margin["bottom"])
+    .append("g")
+      .attr("transform",
+            f"translate({margin['left']},{margin['top']})")
+    )
+
+  nodes_js = to_js(node_list)
+  edges_js = to_js(edge_list, dict_converter=js.Object.fromEntries)
+  id_fn = create_proxy(lambda d, *_:d["id"])
+
+  link = (svg
+    .selectAll("line")
+    .data(edges_js)
+    .enter()
+    .append("line")
+      .style("stroke", "#aaa")
+  )
+
+  node = (svg
+    .selectAll(".node")
+    .data(nodes_js)
+    .enter()
+    .append("g")
+      .attr("class", "node")
+  )
+
+  node.append("circle").attr("r", 20).style("fill", "#69b3a2")
+  node.append("text").attr("text-anchor", "middle").attr("dy", ".35em").text(id_fn)
+
+  def ticked():
+      (link
+        .transition().duration(1000)
+        .attr("x1", create_proxy(lambda d, *_:d.source.x))
+        .attr("y1", create_proxy(lambda d, *_:d.source.y))
+        .attr("x2", create_proxy(lambda d, *_:d.target.x))
+        .attr("y2", create_proxy(lambda d, *_:d.target.y))
+      )
+      (node.transition().duration(1000).attr("transform", create_proxy(lambda d, *_:f"translate({d.x},{d.y})"))
+      )
+  ticked_fn = create_proxy(ticked)
+
+  simulation = (d3.forceSimulation(nodes_js)
+    .force("link", d3.forceLink().id(id_fn).links(edges_js))
+    .force("charge", d3.forceManyBody().strength(-400))
+    .force('collide',d3.forceCollide().radius(30).iterations(2))
+    .force("center", d3.forceCenter(width / 2, max_height / 2))
+    .on("tick", ticked_fn)
+    )
+</py-script>
+    </body>
+</html>

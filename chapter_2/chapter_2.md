@@ -1,8 +1,8 @@
-# Chapter 2 - Visualisation with PyScript
+extractcustomizations# Chapter 2 - Visualisation with PyScript
 
 In this chapter, we will start using PyScript for some data visualisation. Like in the last chapter, we will start with a [template.html](template.html) which is a continuation from [exercise 5 of Chapter 1](/chapter_1/chapter_1.md#exercise-5---loading-a-file).
 
-Moving forward we will assume you have already got the basic knowledge from [Chapter 1](/chapter_1/chapter_1.md) and know how to use some popular Python data handling and visualisation library like [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/).
+Moving forward we will assume you have already got the basic knowledge from [Chapter 1](/chapter_1/chapter_1.md) and know how to use some popular Python data handling and visualisation library like [Pandas](https://pandas.pydata.org/) and [Matplotlib](https://matplotlib.org/). We will also use [NetworkX](https://networkx.org/documentation/stable/index.html) in the last part of this chapter.
 
 There will also be some basic knowledge about HTML and JavaScript required. We will try to explain and link the reference when we go over them. You can also find the reference at the [W3 school website](https://www.w3schools.com/).
 
@@ -24,14 +24,14 @@ First, we need to add Matplotlib into our Python packages in `<py-config>`:
 
 After that, we can import `pyplot` as `plt` like we usually do. We also take the opportunity to adjust the figure size here:
 
-```
+```Python
 import matplotlib.pyplot as plt
 plt.rcParams["figure.figsize"] = (20,30)
 ```
 
 Keep the code we had reading the csv as `df`, we now instead of showing `df`, we make a horizontal bar plot. We also specify the bar labels and title of the plot:
 
-```
+```Python
 fig, ax = plt.subplots()
 bars = ax.barh(df["name"], df["rating"], height=0.7)
 ax.bar_label(bars)
@@ -41,7 +41,7 @@ fig
 
 To recap, the code within the `<py-script>` and `</py-script>` tags pair looks like this:
 
-```
+```Python
 from pyodide.http import open_url
 import pandas as pd
 
@@ -133,7 +133,7 @@ Now things are start getting interesting. We will filter our data depending on t
 
 First, we have to put the code that involving making a plot into a function so we can "redraw" the plot when our data changes. Remember in the first exercise, we have created the plot with this:
 
-```
+```Python
 fig, ax = plt.subplots()
 bars = ax.barh(df["name"], df["rating"], height=0.7)
 ax.bar_label(bars)
@@ -143,7 +143,7 @@ fig
 
 Now let's change it into a function:
 
-```
+```Python
 def plot(data):
     fig, ax = plt.subplots()
     bars = ax.barh(data["name"], data["rating"], height=0.7)
@@ -156,7 +156,7 @@ Notice that in the last line, we are using `pyscript.write("output",fig)` instea
 
 If we call the `plot` function with the original `df` it should give us the same thing as before now:
 
-```
+```Python
 def plot(data):
     fig, ax = plt.subplots()
     bars = ax.barh(data["name"], data["rating"], height=0.7)
@@ -171,7 +171,7 @@ Let's try save the code and refresh the page. If the horizontal bar plot still s
 
 Next, we have to check which flavour has been selected. To do that, first we will gather all the button elements. We do it before `plot(df)`:
 
-```
+```Python
 flavour_elements = js.document.getElementsByName("flavour")
 
 plot(df)
@@ -181,7 +181,7 @@ Here, using [document.getElementsByName](https://www.w3schools.com/js/js_htmldom
 
 Next, we will write some code to check each of the elements in `flavour_elements` to see if they are selected and if so we will filter the data accordingly. However, since we want to repeat this process every time the user click on the buttons, we need to write these code in a function, we can put it after the `flavour_elements` definition:
 
-```
+```Python
 flavour_elements = js.document.getElementsByName("flavour")
 
 def select_flavour():
@@ -202,13 +202,13 @@ One last thing about this function, we have to make it an [event handler](https:
 
 To make a event handler in Python that can work with DOM, we have to use the `create_proxy` provided by `pyodide.ffi`. But first, we need our `select_flavour` function to take one parameter `event`, like this:
 
-```
+```Python
 def select_flavour(event):
 ```
 
 The rest of the function is unchanged. Then we have to import `create_proxy`, let's put it at the top of the Python code, together with the other imports:
 
-```
+```Python
 from pyodide.ffi import create_proxy
 from pyodide.http import open_url
 import pandas as pd
@@ -216,7 +216,7 @@ import pandas as pd
 
 Then we can create the event handlers using this line after the definition of `select_flavour`:
 
-```
+```Python
 def select_flavour(event):
     for ele in flavour_elements:
         if ele.checked:
@@ -233,7 +233,7 @@ ele_proxy = create_proxy(select_flavour)
 
 Now we have `ele_proxy` which is our event handler when someone click on the buttons. Nest, we have to add [event listeners](https://www.w3schools.com/js/js_htmldom_eventlistener.asp) to all the button elements so it will trigger the event handler when being clicked on. Remember that we have all the button elements stored as `flavour_elements`, so we add a for loop like this:
 
-```
+```Python
 ele_proxy = create_proxy(select_flavour)
 
 for ele in flavour_elements:
@@ -268,19 +268,19 @@ Instead, we will be importing D3. However, since D3 is a JavaScript library, we 
 
 After that, we work on the Python code within the `<py-script>` and `</py-script>` tags pair. Replace import `pyplot`:
 
-```
+```Python
 import matplotlib.pyplot as plt
 ```
 
 with import `d3` from `js`:
 
-```
+```Python
 from js import d3
 ```
 
 Now the D3 library is available to use with the Python code, with a few necessary conversion of objects between JavaScript and Python using `to_js` in `pyodide.ffi`. To make `to_js` available, we have to import it right after `create_proxy`:
 
-```
+```Python
 from pyodide.ffi import create_proxy, to_js
 ```
 
@@ -288,13 +288,13 @@ As you may guess, the parameter setting with `plt` and the `plot` function that 
 
 First, we have some initial settings for the plot. In Matplotlib, we just simply set the figure size. However, we want a better looking visualisation this time so it is more complicated in this D3 example. We replace this line:
 
-```
+```Python
 plt.rcParams["figure.figsize"] = (20,30)
 ```
 
 with the following:
 
-```
+```Python
 viz = d3.select("#output")
 viz.select(".loading").remove()
 
@@ -322,7 +322,7 @@ The first 2 lines, we set the visualisation to be display at the `output` elemen
 
 Next, we will replace the code in the `plot` function. Instead of:
 
-```
+```Python
 def plot(data):
     fig, ax = plt.subplots()
     bars = ax.barh(data["name"], data["rating"], height=0.7)
@@ -333,7 +333,7 @@ def plot(data):
 
 Now we have:
 
-```
+```Python
 def plot(data):
     data_js = to_js(data.to_dict(orient="records"))
     height = data["name"].count() * 100 - margin["top"] - margin["bottom"]
@@ -403,10 +403,130 @@ def plot(data):
 
 Which looks like a lot since we are controlling every single elements in the plot and their transition as well. We won't goes into details here, feel free to look up the examples and reference in the [D3 documentation](https://d3js.org/) for the explanation. However, there's one thing to pay attention here. The first line
 
-```
+```Python
 data_js = to_js(data.to_dict(orient="records"))
 ```
 
 is essential for what we are doing here. Since `data` is a Pandas `DataFrame`, therefore it is a Python object, we need to convert it to a JavaScript object so that the D3 library understand. We first convert into a dictionary in Python using `to_dict` method in Pandas `DataFrame`, then we use `to_js` to convert the dictionary into a JavaScript object.
 
 Now, we may refresh the browser and see the interactive D3 graph. The transition animation of the plot is so addictive to watch. The completed result is at [viz_with_d3.html](viz_with_d3.html) for your reference.
+
+## Exercise 5 - D3 with NetworkX
+
+Things are getting more interesting. Since now we can use D3, we can use it to create more complicated and interactive visualisation. One type of the visualisation would really benefit from interactivity is network graph.
+
+I hope you have used [NetworkX](https://networkx.org/documentation/stable/index.html) before, it is a very good tool to analyse network graphs. However, as usually a network graph would involve a lot of nodes and edges, presenting them nicely would require a lot of customisation and interactivity.
+
+So, what if we combine the usage of NetworkX and D3?
+
+In this exercise, we will start with the [graph_template.html](graph_template.html). Since we already learnt how to import Python libraries and D3 we are not going to repeat here.
+
+First, we will import the [Zachary’s Karate Club graph](https://networkx.org/documentation/stable/reference/generated/networkx.generators.social.karate_club_graph.html#karate-club-graph) as our example here. We also export lists of nodes and edges for our visualisation later.
+
+```Python
+G = nx.karate_club_graph()
+node_list = [{"id": node[0], "name": node[1]} for node in G.nodes(data="club")]
+edge_list = [{"source": edge[0], "target": edge[1]} for edge in nx.to_edgelist(G)]
+```
+
+Before doing any visualisation, we would like to display some graph analysis result from NetworkX, like average node connectivity, radius of the graph or the centre nodes etc. This can be done with the NetworkX functions and changing the inner test of the `stat` element:
+
+```Python
+avg_conn = nx.average_node_connectivity(G)
+graph_radius = nx.radius(G)
+center_nodes = nx.center(G)
+
+stat = Element("stat")
+stat.element.innerText = f"""Avg. node connectivity is {avg_conn}
+Radius of the graph is {graph_radius}
+Center nodes are: {center_nodes}"""
+```
+
+Now save and open the html page in the browser. We should now see the results display correctly.
+
+Moving on, let's create our D3 network graph visualisation. We will follow [the example here on the D3 Graph Gallery](https://d3-graph-gallery.com/graph/network_basic.html). Please also note that the D3 version that we are using are [v7](https://devdocs.io/d3~7/).
+
+To set up the "canvas" area in the `viz` div element, we do something similar with our previous D3 examples:
+
+```Python
+margin = {"top": 30, "right": 30, "bottom": 70, "left": 40}
+width = 1000 - margin["left"] - margin["right"]
+max_height = 800 - margin["top"] - margin["bottom"]
+
+viz = d3.select("#viz")
+viz.select(".loading").remove()
+
+svg = (viz
+  .append("svg")
+    .attr("width", width + margin["left"] + margin["right"])
+    .attr("height", max_height + margin["top"] + margin["bottom"])
+  .append("g")
+    .attr("transform",
+          f"translate({margin['left']},{margin['top']})")
+  )
+```
+
+Then we need to prepare the data. We have the `node_list` and `edge_list` that we created earlier, however, they are Python objects. So we need to convert them using `to_js`. We also create a proxy of a lambda function to extract the `id` of the nodes.
+
+```Python
+nodes_js = to_js(node_list)
+edges_js = to_js(edge_list, dict_converter=js.Object.fromEntries)
+id_fn = create_proxy(lambda d, *_:d["id"])
+```
+
+Now, let's create the links and nodes in the visualisation, one thing that is different here from the Graph Gallery is that instead of using simple circles as the nodes, we create an object `g`. We then add of a circle and a text label for each of them. This way we will have nodes that has the `id` as labels.
+
+```Python
+link = (svg
+  .selectAll("line")
+  .data(edges_js)
+  .enter()
+  .append("line")
+    .style("stroke", "#aaa")
+)
+
+node = (svg
+  .selectAll(".node")
+  .data(nodes_js)
+  .enter()
+  .append("g")
+    .attr("class", "node")
+)
+
+node.append("circle").attr("r", 20).style("fill", "#69b3a2")
+node.append("text").attr("text-anchor", "middle").attr("dy", ".35em").text(id_fn)
+```
+
+Save and refresh the html page. Now we see the nodes, however, they are all stacked up on top of each others so we only see the node 33 hanging there.
+
+Next, we want the nodes to be spread out and the links are at the right position. To do that, first we set up a listener called `ticked`, just like the example in Graph Gallery does:
+
+```Python
+def ticked():
+    (link
+      .transition().duration(1000)
+      .attr("x1", create_proxy(lambda d, *_:d.source.x))
+      .attr("y1", create_proxy(lambda d, *_:d.source.y))
+      .attr("x2", create_proxy(lambda d, *_:d.target.x))
+      .attr("y2", create_proxy(lambda d, *_:d.target.y))
+    )
+    (node.transition().duration(1000).attr("transform", create_proxy(lambda d, *_:f"translate({d.x},{d.y})"))
+    )
+ticked_fn = create_proxy(ticked)
+```
+
+Here compare to the Graph Gallery example, we also added a transition animation and we have to use `create_proxy` since technically we are coding in Python.
+
+Then we create the force simulation in D3. We use slightly difference setting than the Graph Gallery and if you want to know more about force simulation, you can check out [the documentation here](https://devdocs.io/d3~7-force/). Remember to use the listener proxy `ticked_fn` we created:
+
+```Python
+simulation = (d3.forceSimulation(nodes_js)
+  .force("link", d3.forceLink().id(id_fn).links(edges_js))
+  .force("charge", d3.forceManyBody().strength(-400))
+  .force('collide',d3.forceCollide().radius(30).iterations(2))
+  .force("center", d3.forceCenter(width / 2, max_height / 2))
+  .on("tick", ticked_fn)
+  )
+```
+
+Now save and refresh the page. After loading and the D3 calculation (it take some time for the D3 calculation), the nodes should spread out and there are links that connect the nodes that are connected. You can check the final result at [networkx_with_d3.html](networkx_with_d3.html).

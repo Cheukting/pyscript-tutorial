@@ -689,7 +689,7 @@ graph_ele = js.document.getElementById("viz")
 graph_ele.addEventListener("click", change_proxy)
 ```
 
-Finally, we can save and refresh the page to see our master piece. Click on the nodes to see the highlighting, it should works as before. Also click on the spaces other than the nodes to see the formation toggles.
+Finally, we can save and refresh the page to see our master piece. Click on the nodes to see the highlighting, it should works as before. Also click on the spaces other than the nodes to see the formation toggles. The finished visualisation is at [interactive_network_graph.html](interactive_network_graph.html) for your reference.
 
 ---
 

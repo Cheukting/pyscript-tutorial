@@ -693,4 +693,4 @@ Finally, we can save and refresh the page to see our master piece. Click on the 
 
 ---
 
-This concludes Chapter 2 of this workshop. To continue learning how to deploy machine learning modes in the frontend, please go to Chapter 3 (Coming soon)
+This concludes Chapter 2 of this workshop. To continue learning how to deploy machine learning modes in the frontend, please go to [Chapter 3](/chapter_3/chapter_3.md)

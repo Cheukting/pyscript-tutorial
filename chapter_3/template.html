@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PyScript Tutorial</title>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2022.12.1/pyscript.css" />
+    <script defer src="https://pyscript.net/releases/2022.12.1/pyscript.js"></script>
+</head>
+<body>
+  <py-config>
+    packages = ["pandas", "scikit-learn", "fuzzywuzzy"]
+  </py-config>
+  <main class="max-w-xs mx-auto mt-4">
+  <section>
+  <div class="text-center w-full mb-8">
+    Your favourite movie: <input id="fav-movie" class="border flex-1 mr-3 border-gray-300 p-2 rounded" type="text">
+  <br/>
+    Number of recommendation:<input id="top-n" class="border flex-1 mr-3 border-gray-300 p-2 rounded" type="text">
+  <br/>
+    <button id="run-btn" class="p-2 text-white bg-blue-600 border border-blue-600 rounded" type="submit">
+      Recommend!
+    </button>
+  </div>
+  <div class="text-center w-full mb-8"><ol id="output"></ol></div>
+  <template id="movie-template"><li class="movie"></li></template>
+  <py-script>
+
+  </py-script>
+</section>
+</main>
+</body>
+</html>

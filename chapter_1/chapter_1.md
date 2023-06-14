@@ -13,18 +13,24 @@ First, make a copy of the [template.html](template.html), you can name it someth
 Then we inspect the file. See the line
 
 ```html
-<link rel="stylesheet" href="https://pyscript.net/releases/2022.09.1/pyscript.css" />
+<link
+  rel="stylesheet"
+  href="https://pyscript.net/releases/2022.09.1/pyscript.css"
+/>
 ```
+
 It is calling the stylesheet that PyScript may need to display some of the default elements like the Python REPL (which we will talk about in other exercises). It only affect the style of the REPL so if we are not using it you can opt-out of it or use your own style sheet.
 
 The line that makes the PyScript magic happened is
 
 ```html
-<script defer src="https://pyscript.net/releases/2022.09.1/pyscript.js"></script>
+<script
+  defer
+  src="https://pyscript.net/releases/2022.09.1/pyscript.js"
+></script>
 ```
 
 And is needed if you want to use PyScript. In this chapter we are using version 2022.09.1, which is hosted on `pyscript.net` CDN. Pyscript is still under heavy development and it might happen that newer releases introduce some backward-incompatible change. By using a specific version, we ensure that our applications will run "forever".
-
 
 > You can choose to self host the complied PyScript files instead of using the CDN. The files can be found in the [PyScript repo tags](https://github.com/pyscript/pyscript/tags). Replace the above urls to the url of your `pyscript.js` and `pyscript.css` files.
 
@@ -51,20 +57,19 @@ Now, let's try to add a Python REPL in the webpage. If you want to keep the work
 Now below the `</py-script>` tag. Add a pair of tags like this:
 
 ```html
-<py-repl>
-</py-repl>
+<py-repl> </py-repl>
 ```
 
 This will create a Python REPL on the webpage. Let's look at the browser to find out. If you are on a new file, open that file with a browser, otherwise you can just refresh to see the new changes.
 
-Now by seeing the REPL, you can try to code Python in it. Try printing the time now from the REPL? Then click on the green arrow or press `shirt + enter`.
+Now by seeing the REPL, you can try to code Python in it. Try printing the time now from the REPL? Then click on the green arrow or press `shift + enter`.
 
-You can also add Python code between the the tags `<py-repl>` and `</py-repl>`, but they won't get executed right away like the previous exercise. They will be added to the REPL and you have to run them with the green arrow or press `shirt + enter`.
+You can also add Python code between the the tags `<py-repl>` and `</py-repl>`, but they won't get executed right away like the previous exercise. They will be added to the REPL and you have to run them with the green arrow or press `shift + enter`.
 
 Now try adding the following line between the `<py-repl>` and `</py-repl>` tags:
 
 ```python
-print(datetime.now()) # press shirt + enter to run
+print(datetime.now()) # press shift + enter to run
 ```
 
 and refresh the page.
@@ -72,7 +77,7 @@ and refresh the page.
 What if I want to keep the result of the previous REPL and have a new one after I executed the old one. You can activate that creature by adding `auto-generate="true"` inside the `<py-repl>` tag like this:
 
 ```html
-<py-repl auto-generate="true">
+<py-repl auto-generate="true"></py-repl>
 ```
 
 Now save and refresh again to see the changes.
@@ -88,7 +93,7 @@ Now, let's go to the `hello_world.html` and use it as a starting point. If you h
 We need to modify the code inside the `<py-script>` and `</py-script>` tags pair. But first, we need to add a div element as `output` for the output, after the `<py-script>` and `</py-script>` tags pair, add this:
 
 ```html
-<div id=output></div>
+<div id="output"></div>
 ```
 
 Then, we need to change our code, first, we need to import asyncio after importing datetime.
@@ -114,9 +119,9 @@ async def tick():
 
 In this function, it want it to run and never end, so we:
 
-1) use a while `True` loop;
-2) then we do the `.write` into `output` (the line above) and finally;
-3) sleep for a second before the next iteration
+1. use a while `True` loop;
+2. then we do the `.write` into `output` (the line above) and finally;
+3. sleep for a second before the next iteration
 
 just like this:
 
@@ -140,7 +145,6 @@ pyscript.run_until_complete(tick())
 ```
 
 Did you follow? If you are not sure here is all the code within the `<py-script>` and `</py-script>` tags pair:
-
 
 ```python
 from datetime import datetime
@@ -243,9 +247,9 @@ df.head()
 
 Now refresh the page (or open it) and see that instead of the DataFrame, there is a REPL for you to do the Pandas operation with `df`. You can now try running `df.head()` by pushing `shift + enter`. After that, try changing the `df.head()` to other operations like:
 
-* `df.tail()` to show the tail of the data set,
-* `df[['name']]` to get all the names of the ice creams, or
-* `df.query("rating > 4 and rating_count > 100")` for the best rated ice creams
+- `df.tail()` to show the tail of the data set,
+- `df[['name']]` to get all the names of the ice creams, or
+- `df.query("rating > 4 and rating_count > 100")` for the best rated ice creams
 
 ---
 

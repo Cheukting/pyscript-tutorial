@@ -57,14 +57,14 @@ Now below the `</py-script>` tag. Add a pair of tags like this:
 
 This will create a Python REPL on the webpage. Let's look at the browser to find out. If you are on a new file, open that file with a browser, otherwise you can just refresh to see the new changes.
 
-Now by seeing the REPL, you can try to code Python in it. Try printing the time now from the REPL? Then click on the green arrow or press `shirt + enter`.
+Now by seeing the REPL, you can try to code Python in it. Try printing the time now from the REPL? Then click on the green arrow or press `shift + enter`.
 
-You can also add Python code between the the tags `<py-repl>` and `</py-repl>`, but they won't get executed right away like the previous exercise. They will be added to the REPL and you have to run them with the green arrow or press `shirt + enter`.
+You can also add Python code between the the tags `<py-repl>` and `</py-repl>`, but they won't get executed right away like the previous exercise. They will be added to the REPL and you have to run them with the green arrow or press `shift + enter`.
 
 Now try adding the following line between the `<py-repl>` and `</py-repl>` tags:
 
 ```python
-print(datetime.now()) # press shirt + enter to run
+print(datetime.now()) # press shift + enter to run
 ```
 
 and refresh the page.
@@ -88,7 +88,7 @@ Now, let's go to the `hello_world.html` and use it as a starting point. If you h
 We need to modify the code inside the `<py-script>` and `</py-script>` tags pair. But first, we need to add a div element as `output` for the output, after the `<py-script>` and `</py-script>` tags pair, add this:
 
 ```html
-<div id=output></div>
+<div id="output"></div>
 ```
 
 Then, we need to change our code, first, we need to import asyncio after importing datetime.

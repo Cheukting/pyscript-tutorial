@@ -40,7 +40,8 @@
         bars = ax.barh(data["name"], data["rating"], height=0.7)
         ax.bar_label(bars)
         plt.title("Rating of ice cream flavours of your choice")
-        pyscript.write("output",fig)
+        Element("output").clear()
+        display(fig,target="output")
 
     flavour_elements = js.document.getElementsByName("flavour")
 

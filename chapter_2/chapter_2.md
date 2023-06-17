@@ -149,10 +149,11 @@ def plot(data):
     bars = ax.barh(data["name"], data["rating"], height=0.7)
     ax.bar_label(bars)
     plt.title("Rating of ice cream flavours of your choice")
-    pyscript.write("output",fig)
+    Element("output").clear()
+    display(fig, target="output")
 ```
 
-Notice that in the last line, we are using `pyscript.write("output",fig)` instead of just `fig` as we have now a dedicated output `<div>` element for the plot. We also change the name `df` to `data` within the function to avoid confusion with the original `df`.
+Notice that in the last line, we are using `display(fig,target="output")` instead of just `fig` as we have now a dedicated output `<div>` element for the plot. We also change the name `df` to `data` within the function to avoid confusion with the original `df`.
 
 If we call the `plot` function with the original `df` it should give us the same thing as before now:
 
@@ -162,7 +163,8 @@ def plot(data):
     bars = ax.barh(data["name"], data["rating"], height=0.7)
     ax.bar_label(bars)
     plt.title("Rating of ice cream flavours of your choice")
-    pyscript.write("output",fig)
+    Element("output").clear()
+    display(fig, target="output")
 
 plot(df)
 ```
@@ -328,7 +330,8 @@ def plot(data):
     bars = ax.barh(data["name"], data["rating"], height=0.7)
     ax.bar_label(bars)
     plt.title("Rating of ice cream flavours of your choice")
-    pyscript.write("output",fig)
+    Element("output").clear()
+    display(fig, target="output")
 ```
 
 Now we have:
@@ -579,7 +582,7 @@ def highlight(d, *_):
         return "#000"
 ```
 
-For the node transition in  `ticked`, we will not just move them to their position, we will also change the `fill` colour depending of the `highlight` of the node (since `highlight` is a Python function, we need to create a proxy before passing to D3):
+For the node transition in `ticked`, we will not just move them to their position, we will also change the `fill` colour depending of the `highlight` of the node (since `highlight` is a Python function, we need to create a proxy before passing to D3):
 
 ```Python
 def ticked():
@@ -607,6 +610,7 @@ First, we will need a few more global variables to help us. After defining `high
 circle_mode = False
 node_clicked = False
 ```
+
 The `circle_mode` is used to keep track of the toggle state and `node_clicked` help us marked if we are clicking on the background or the nodes.
 
 We also need a helper function `get_cir_coor` to calculate the coordinates of the nodes when they form a circle. Put its definition after we define `highlight`:

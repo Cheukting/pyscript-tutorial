@@ -1,6 +1,6 @@
 # PyScript Tutorial
 
-*Note: PyScript is under active developement and something in this tutorial may change in the future. Please check [documentation on pyscript.net](http://docs.pyscript.net/) for current updates*
+_Note: PyScript is under active developement and something in this tutorial may change in the future. Please check [documentation on pyscript.net](http://docs.pyscript.net/) for current updates_
 
 This workshop consists of 3 chapters. In each chapter, by walking through hands-on exercises, we can use PyScirpt to create data visualisations and deploy Sci-Kit learn models, which are some of the most common tasks in data sciences.
 
@@ -29,3 +29,7 @@ We expect no prior knowledge of PyScript, however, we expect participants are fa
 ## Who is the workshop for
 
 This workshop is for Pythonistas or Data Scientists who need to deploy data science projects or present data science findings. They may be interested in learning PyScript and seeing if it can help them with their work.
+
+Contributors:
+
+- Andrés Felipe Méndez @andresfelipemendez
